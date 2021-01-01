@@ -1,53 +1,55 @@
-﻿using Xunit;
-using Xunit.Abstractions;
-using InfrastructureLayer.DataAccess.Repositories.Specific.Department;
-using ServiceLayer.Services.DepartmentServices;
-using ServiceLayer.CommonServices;
-using DomainLayer.Models.Department;
-using System.Collections.Generic;
-using CommonComponents;
-using Newtonsoft.Json.Linq;
+﻿using CommonComponents;
+using DomainLayer.Models.Role;
+using InfrastructureLayer.DataAccess.Repositories.Specific;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using ServiceLayer.CommonServices;
+using ServiceLayer.Services.RoleServices;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Xunit;
+using Xunit.Abstractions;
 
-namespace ServicesLayer.Test.DepartmentTests
+namespace ServicesLayer.Test.RoleTest
 {
-
     [Trait("Catagory", "Data Access Validation")]
-    public class DepartmentServicesDataAccessTests
+    public class RoleServicesDataAccessTests
     {
-        private readonly ITestOutputHelper testOutputHelper;
-        private string connectionString;
-        private DepartmentServices departmentService;
 
-        public DepartmentServicesDataAccessTests(ITestOutputHelper testOutputHelper)
+        private readonly ITestOutputHelper testOutputHelper;
+        private RoleServices roleServices;
+
+        public RoleServicesDataAccessTests(ITestOutputHelper testOutputHelper)
         {
-            connectionString = Properties.Settings.Default.connectionStr;
-            departmentService = new DepartmentServices(new DepartmentRepository(connectionString), new ModelDataAnnotationCheck());
+            roleServices = new RoleServices(new RoleRepository(), new ModelDataAnnotationCheck());
             this.testOutputHelper = testOutputHelper;
         }
 
         [Fact]
-        public void ShouldReturnListOfDepartments()
+        public void ShouldReturnListOfRoles()
         {
-            List<DepartmentModel> depatmentsList = (List<DepartmentModel>)departmentService.GetAll();
+            List<RoleModel> rolesList = (List<RoleModel>)roleServices.GetAll();
 
-            Assert.NotEmpty(depatmentsList);
+            Assert.NotEmpty(rolesList);
 
-            foreach(DepartmentModel dm in depatmentsList)
+            foreach (RoleModel rm in rolesList)
             {
-                testOutputHelper.WriteLine($"Name: {dm.DepartmentName}\nPhone Number: {dm.PhoneNumber}\nManager id: {dm.ManagerID}");
+                testOutputHelper.WriteLine($"Name: {rm.Name}.");
             }
         }
 
         [Fact]
-        public void ShouldReturnDepartmentByID()
+        public void ShouldReturnRoleByID()
         {
-            DepartmentModel departmentModel = null;
-            int idToGet = 5;
+            RoleModel roleModel = null;
+            int idToGet = 2;
 
             try
             {
-                departmentModel = departmentService.GetByID(idToGet);
+                roleModel = roleServices.GetByID(idToGet);
             }
             catch (DataAccessException e)
             {
@@ -55,13 +57,13 @@ namespace ServicesLayer.Test.DepartmentTests
                 testOutputHelper.WriteLine(e.DataAccessStatusInfo.getFormattedValues());
             }
 
-            Assert.True(departmentModel != null);
-            Assert.True(departmentModel.DepartmentId == idToGet);
+            Assert.True(roleModel != null);
+            Assert.True(roleModel.ID == idToGet);
 
-            if (departmentModel != null)
+            if (roleModel != null)
             {
-                string departmentModelJsonStr = Newtonsoft.Json.JsonConvert.SerializeObject(departmentModel);
-                string formattedJsonStr = JToken.Parse(departmentModelJsonStr).ToString();
+                string roleModelJsonStr = Newtonsoft.Json.JsonConvert.SerializeObject(roleModel);
+                string formattedJsonStr = JToken.Parse(roleModelJsonStr).ToString();
                 testOutputHelper.WriteLine(formattedJsonStr);
 
             }
@@ -70,10 +72,8 @@ namespace ServicesLayer.Test.DepartmentTests
         [Fact]
         public void ShouldReturnSuccessForAdd()
         {
-            DepartmentModel departmentModel = new DepartmentModel();
-            departmentModel.DepartmentName = "Unit 1425";
-            departmentModel.PhoneNumber = "+9677777777";
-           
+            RoleModel roleModel = new RoleModel();
+            roleModel.Name = "No one";
 
             bool opeartionSucceeded = false;
             string dataAccessJsonStr = string.Empty;
@@ -81,7 +81,7 @@ namespace ServicesLayer.Test.DepartmentTests
 
             try
             {
-                departmentService.Add(departmentModel);
+                roleServices.Add(roleModel);
                 opeartionSucceeded = true;
 
             }
@@ -107,10 +107,9 @@ namespace ServicesLayer.Test.DepartmentTests
         [Fact]
         public void ShouldReturnSuccessForUpdate()
         {
-            DepartmentModel departmentModel = new DepartmentModel();
-            departmentModel.DepartmentId = 4;
-            departmentModel.DepartmentName = "Human Resource Department(Unit test 120)";
-            departmentModel.PhoneNumber = "+9677727272727";
+            RoleModel roleModel = new RoleModel();
+            roleModel.ID = 4;
+            roleModel.Name= "Unit test updated";
 
             bool opeartionSucceeded = false;
             string dataAccessJsonStr = string.Empty;
@@ -118,7 +117,7 @@ namespace ServicesLayer.Test.DepartmentTests
 
             try
             {
-                departmentService.Update(departmentModel);
+                roleServices.Update(roleModel);
                 opeartionSucceeded = true;
 
             }
@@ -146,8 +145,8 @@ namespace ServicesLayer.Test.DepartmentTests
         public void ShouldReturnSuccessForDelete()
         {
 
-            DepartmentModel departmentModel = new DepartmentModel();
-            departmentModel.DepartmentId = 4;
+            RoleModel roleModel = new RoleModel();
+            roleModel.ID = 4;
 
             bool opeartionSucceeded = false;
             string dataAccessJsonStr = string.Empty;
@@ -155,7 +154,7 @@ namespace ServicesLayer.Test.DepartmentTests
 
             try
             {
-                departmentService.Remove(departmentModel);
+                roleServices.Remove(roleModel);
                 opeartionSucceeded = true;
 
             }
@@ -170,7 +169,7 @@ namespace ServicesLayer.Test.DepartmentTests
             try
             {
                 Assert.True(opeartionSucceeded);
-                testOutputHelper.WriteLine("The record has been succesfully updated");
+                testOutputHelper.WriteLine("The record has been succesfully deleted");
             }
             finally
             {
@@ -180,6 +179,4 @@ namespace ServicesLayer.Test.DepartmentTests
 
         }
     }
-
-   
 }

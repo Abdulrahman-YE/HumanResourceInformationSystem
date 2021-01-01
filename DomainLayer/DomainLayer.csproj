@@ -46,8 +46,12 @@
     <Compile Include="Models\Department\IDepartmentModel.cs" />
     <Compile Include="Models\Location\ILocationModel.cs" />
     <Compile Include="Models\Location\LocationModel.cs" />
+    <Compile Include="Models\Role\IRoleModel.cs" />
+    <Compile Include="Models\Role\RoleModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

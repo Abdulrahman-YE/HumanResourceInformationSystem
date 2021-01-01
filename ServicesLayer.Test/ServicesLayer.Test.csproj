@@ -71,6 +71,9 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="RoleTest\RoleServicesDataAccessTests.cs" />
+    <Compile Include="RoleTest\RoleServicesFixture.cs" />
+    <Compile Include="RoleTest\RoleServicesValidationTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

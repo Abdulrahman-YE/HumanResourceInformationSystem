@@ -43,7 +43,13 @@
   <ItemGroup>
     <Compile Include="DataAccess\Repositories\Specific\Department\DepartmentRepository.cs" />
     <Compile Include="DataAccess\Repositories\Specific\Location\LocationRepository.cs" />
+    <Compile Include="DataAccess\Repositories\Specific\Role\RoleRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CommonComponents\CommonComponents.csproj">
@@ -58,6 +64,13 @@
       <Project>{92bf4e5d-def3-4f30-bfa4-fe8bc94d94e0}</Project>
       <Name>ServiceLayer</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -51,6 +51,9 @@
     <Compile Include="Services\LocationServices\ILocationRepository.cs" />
     <Compile Include="Services\LocationServices\ILocationServices.cs" />
     <Compile Include="Services\LocationServices\LocationServices.cs" />
+    <Compile Include="Services\RoleServices\IRoleRepository.cs" />
+    <Compile Include="Services\RoleServices\IRoleServices.cs" />
+    <Compile Include="Services\RoleServices\RoleServices.cs" />
     <Compile Include="Settings.cs" />
   </ItemGroup>
   <ItemGroup>

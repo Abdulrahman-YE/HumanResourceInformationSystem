@@ -1,20 +1,18 @@
-﻿using DomainLayer.Models.Department;
-using CommonComponents;
-using ServiceLayer.Services;
+﻿using CommonComponents;
+using DomainLayer.Models.Role;
+using ServiceLayer.Services.RoleServices;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Data.SqlClient;
-using System.Data;
 
-namespace InfrastructureLayer.DataAccess.Repositories.Specific.Department
+namespace InfrastructureLayer.DataAccess.Repositories.Specific
 {
-    public class DepartmentRepository : IDepartmentRepository
+    public class RoleRepository : IRoleRepository
     {
-
-        protected string connectionString = Properties.Settings.Default.connectionStr;
+        private string connectionString = Properties.Settings.Default.connectionStr;
 
         /// <summary>
         /// Used to help if certin record exists or not
@@ -38,16 +36,16 @@ namespace InfrastructureLayer.DataAccess.Repositories.Specific.Department
 
 
 
-        public DepartmentRepository()
+        public RoleRepository()
         {
-            
+
         }
 
-        public DepartmentRepository(string connectionString)
+        public RoleRepository(string connectionString)
         {
-            this.connectionString = connectionString;   
+            this.connectionString = connectionString;
         }
-        public void Add(IDepartmentModel departmentModel)
+        public void Add(IRoleModel roleModel)
         {
             DataAccessStatus dataAccessStatus = new DataAccessStatus();
 
@@ -59,10 +57,10 @@ namespace InfrastructureLayer.DataAccess.Repositories.Specific.Department
                     sqlConnection.Open();
 
                 }
-                catch(SqlException e)
+                catch (SqlException e)
                 {
                     dataAccessStatus.setValues(status: "Error", operationSucceeded: false, exceptionMessage: e.Message,
-                        customMessage: "Unable to add Department Model. Could not open a database connection", helpLink: e.HelpLink, errorCode: e.ErrorCode,
+                        customMessage: "Unable to add Role Model. Could not open a database connection", helpLink: e.HelpLink, errorCode: e.ErrorCode,
                         stackTrace: e.StackTrace);
 
                     throw new DataAccessException(e.Message, e.InnerException, dataAccessStatus);
@@ -70,19 +68,19 @@ namespace InfrastructureLayer.DataAccess.Repositories.Specific.Department
                 }
 
                 string addQuery =
-                    "INSERT INTO [Departments] ([Name], PhoneNumber, ManagerID) " +
-                    "VALUES (@DepartmentName, @PhoneNumber, @ManagerId)";
+                    "INSERT INTO [Roles] ([Name]) " +
+                    "VALUES (@Name)";
 
                 using (SqlCommand cmd = new SqlCommand(null, sqlConnection))
                 {
 
                     try
                     {
-                        RecordExistsCheck(cmd, departmentModel, TypeOfExistenceCheck.DoesNotExistInDB, RequestType.Add);
+                        RecordExistsCheck(cmd, roleModel, TypeOfExistenceCheck.DoesNotExistInDB, RequestType.Add);
                     }
-                    catch(DataAccessException e)
+                    catch (DataAccessException e)
                     {
-                        e.DataAccessStatusInfo.CustomMessage = "Department model could not be added because it is already in the database.";
+                        e.DataAccessStatusInfo.CustomMessage = "Role model could not be added because it is already in the database.";
                         e.DataAccessStatusInfo.ExceptionMessage = string.Copy(e.Message);
                         e.DataAccessStatusInfo.StackTrace = string.Copy(e.StackTrace);
 
@@ -91,39 +89,19 @@ namespace InfrastructureLayer.DataAccess.Repositories.Specific.Department
 
                     cmd.CommandText = addQuery;
 
-                    SqlParameter depName = new SqlParameter("@DepartmentName", System.Data.SqlDbType.VarChar, 40);
-                    SqlParameter phone = new SqlParameter("@PhoneNumber", System.Data.SqlDbType.VarChar, 20);
-                    SqlParameter manID = new SqlParameter("@ManagerId", System.Data.SqlDbType.Int);
-
-                    depName.Value = departmentModel.DepartmentName;
-                    phone.Value = departmentModel.PhoneNumber;
-                    manID.IsNullable = true;
-
-
-                    if (!(departmentModel.ManagerID == 0))
-                    {
-                        manID.Value = Convert.ToInt32((departmentModel.ManagerID));
-
-                    }
-                    else
-                    {
-                        manID.Value = DBNull.Value;
-                    }
-                    cmd.Parameters.Add(depName);
-                    cmd.Parameters.Add(phone);
-                    cmd.Parameters.Add(manID);
-
-
-                   
+                    SqlParameter roleName = new SqlParameter("@Name", System.Data.SqlDbType.VarChar, 20);
+                    roleName.Value = roleModel.Name;
+                    cmd.Parameters.Add(roleName);
+                    
 
                     try
                     {
                         cmd.ExecuteNonQuery();
                     }
-                    catch(SqlException e)
+                    catch (SqlException e)
                     {
                         dataAccessStatus.setValues(status: "Error", operationSucceeded: false, exceptionMessage: e.Message,
-                        customMessage: "Unable to add Department Model.", helpLink: e.HelpLink, errorCode: e.ErrorCode,
+                        customMessage: "Unable to add Role Model.", helpLink: e.HelpLink, errorCode: e.ErrorCode,
                         stackTrace: e.StackTrace);
 
                         throw new DataAccessException(e.Message, e.InnerException, dataAccessStatus);
@@ -132,13 +110,13 @@ namespace InfrastructureLayer.DataAccess.Repositories.Specific.Department
                     //Confirm the Department Model was Added to the database
                     try
                     {
-                        RecordExistsCheck(cmd, departmentModel, TypeOfExistenceCheck.DoesExistInDB, RequestType.ConfirmAdd);
+                        RecordExistsCheck(cmd, roleModel, TypeOfExistenceCheck.DoesExistInDB, RequestType.ConfirmAdd);
                     }
-                    catch(DataAccessException e)
+                    catch (DataAccessException e)
                     {
                         e.DataAccessStatusInfo.Status = "Error";
                         e.DataAccessStatusInfo.OperationSucceeded = false;
-                        e.DataAccessStatusInfo.CustomMessage = "Failed to find deaptment model in database after add o[eration completed.";
+                        e.DataAccessStatusInfo.CustomMessage = "Failed to find role model in database after add operation completed.";
                         e.DataAccessStatusInfo.ExceptionMessage = string.Copy(e.Message);
                         e.DataAccessStatusInfo.StackTrace = string.Copy(e.StackTrace);
 
@@ -150,12 +128,11 @@ namespace InfrastructureLayer.DataAccess.Repositories.Specific.Department
                 }
 
             }
-           
         }
 
-        public IEnumerable<IDepartmentModel> GetAll()
+        public IEnumerable<IRoleModel> GetAll()
         {
-            List<DepartmentModel> departmentModels = new List<DepartmentModel>();
+            List<RoleModel> roleModels = new List<RoleModel>();
             DataAccessStatus dataAccessStatus = new DataAccessStatus();
 
             using (SqlConnection sqlConnection = new SqlConnection(this.connectionString))
@@ -164,54 +141,45 @@ namespace InfrastructureLayer.DataAccess.Repositories.Specific.Department
                 {
                     sqlConnection.Open();
 
-                    string selectAllQuery = "Select * FROM [Departments]";
-                    
+                    string selectAllQuery = "Select * FROM [Roles]";
 
-                    using(SqlCommand cmd = new SqlCommand(selectAllQuery, sqlConnection))
+
+                    using (SqlCommand cmd = new SqlCommand(selectAllQuery, sqlConnection))
                     {
-                        using (SqlDataReader reader = cmd.ExecuteReader() )
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
                             while (reader.Read())
                             {
+                                RoleModel roleModel = new RoleModel();
+                                roleModel.ID = Int32.Parse(reader["ID"].ToString());
+                                roleModel.Name = string.Copy(reader["Name"].ToString());
 
-
-                                DepartmentModel departmentModel = new DepartmentModel();
-                                departmentModel.DepartmentId = Int32.Parse(reader["ID"].ToString());
-                                departmentModel.DepartmentName = reader["Name"].ToString();
-                                departmentModel.PhoneNumber = reader["PhoneNumber"].ToString();
-
-                                
-                                if(!string.IsNullOrEmpty(reader["ManagerID"].ToString()))
-                                {
-                                    departmentModel.ManagerID = Int32.Parse(reader["ManagerID"].ToString());
-
-                                }
-
-                                departmentModels.Add(departmentModel);
+                                roleModels.Add(roleModel);
                             }
-                        }                     
+                        }
                     }
                     sqlConnection.Close();
                 }
-                catch(SqlException e)
+                catch (SqlException e)
                 {
                     dataAccessStatus.setValues(status: "Error", operationSucceeded: false, exceptionMessage: e.Message,
-                        customMessage: "Unable to get Department Model list from database", helpLink: e.HelpLink, errorCode: e.ErrorCode,
+                        customMessage: "Unable to get Role Model list from database", helpLink: e.HelpLink, errorCode: e.ErrorCode,
                         stackTrace: e.StackTrace);
 
                     throw new DataAccessException(e.Message, e.InnerException, dataAccessStatus);
                 }
-                return departmentModels;
+                return roleModels;
             }
         }
 
-        public DepartmentModel GetByID(int departmentId)
+        public RoleModel GetByID(int id)
         {
-            DepartmentModel departmentModel = new DepartmentModel();
+            RoleModel roleModel = new RoleModel();
             DataAccessStatus dataAccessStatus = new DataAccessStatus();
             bool matchingRecoredFound = false;
-            string selectByIdQuery = "SELECT [ID], [Name], [PhoneNumber], [ManagerID]  " +
-                "FROM [Departments] WHERE [ID] = @DepartmentID";
+
+            string selectByIdQuery = "SELECT [ID], [Name]  " +
+                "FROM [Roles] WHERE [ID] = @ID";
 
             using (SqlConnection sqlConnection = new SqlConnection(this.connectionString))
             {
@@ -223,22 +191,15 @@ namespace InfrastructureLayer.DataAccess.Repositories.Specific.Department
                     {
                         cmd.CommandText = selectByIdQuery;
                         cmd.Prepare();
-                        cmd.Parameters.Add(new SqlParameter("@DepartmentID", departmentId));
+                        cmd.Parameters.Add(new SqlParameter("@ID", id));
 
                         using (SqlDataReader reader = cmd.ExecuteReader())
                         {
                             matchingRecoredFound = reader.HasRows;
                             while (reader.Read())
                             {
-                                departmentModel.DepartmentId = departmentId;
-                                departmentModel.DepartmentName = reader["Name"].ToString();
-                                departmentModel.PhoneNumber = reader["PhoneNumber"].ToString();
-
-                                if (!string.IsNullOrEmpty(reader["ManagerID"].ToString()))
-                                {
-                                    departmentModel.ManagerID = Int32.Parse(reader["ManagerID"].ToString());
-
-                                }
+                                roleModel.ID = id;
+                                roleModel.Name = reader["Name"].ToString();
                             }
 
                         }
@@ -249,30 +210,28 @@ namespace InfrastructureLayer.DataAccess.Repositories.Specific.Department
                 catch (SqlException e)
                 {
                     dataAccessStatus.setValues(status: "Error", operationSucceeded: false, exceptionMessage: e.Message,
-                       customMessage: "Unable to get Department Model record from database", helpLink: e.HelpLink, errorCode: e.ErrorCode,
+                       customMessage: "Unable to get Role Model record from database", helpLink: e.HelpLink, errorCode: e.ErrorCode,
                        stackTrace: e.StackTrace);
 
                     throw new DataAccessException(e.Message, e.InnerException, dataAccessStatus);
                 }
 
-                if(!matchingRecoredFound)
+                if (!matchingRecoredFound)
                 {
                     dataAccessStatus.setValues(status: "Error", operationSucceeded: false, exceptionMessage: "",
-                      customMessage: $"Record not found!. Unable to get Department Model record for department id {departmentId}. Id {departmentId} does not exist in the database.", helpLink: "", errorCode: 0,
+                      customMessage: $"Record not found!. Unable to get Role Model record for role id : {id}. Id : {id} does not exist in the database.", helpLink: "", errorCode: 0,
                       stackTrace: "");
 
                     throw new DataAccessException(dataAccessStatus);
                 }
 
-                return departmentModel;
+                return roleModel;
             }
 
 
-            }
+        }
 
-        
-
-        public void Remove(IDepartmentModel departmentModel)
+        public void Remove(IRoleModel roleModel)
         {
             DataAccessStatus dataAccessStatus = new DataAccessStatus();
 
@@ -283,27 +242,27 @@ namespace InfrastructureLayer.DataAccess.Repositories.Specific.Department
                 {
                     sqlConnection.Open();
                 }
-                catch(SqlException e)
+                catch (SqlException e)
                 {
                     dataAccessStatus.setValues(status: "Error", operationSucceeded: false, exceptionMessage: e.Message,
-                        customMessage: "Unable to Delete Department Model. Could not open database connection.",
+                        customMessage: "Unable to Delete Role Model. Could not open database connection.",
                         helpLink: e.HelpLink, errorCode: e.ErrorCode, stackTrace: e.StackTrace);
-                    
+
                     throw new DataAccessException(e.Message, e.InnerException, dataAccessStatus);
                 }
 
-                string deleteQuery = "DELETE FROM [Departments] WHERE [ID] = @DepartmentId";
+                string deleteQuery = "DELETE FROM [Roles] WHERE [ID] = @ID";
 
                 using (SqlCommand cmd = new SqlCommand(deleteQuery, sqlConnection))
                 {
 
                     try
                     {
-                        RecordExistsCheck(cmd, departmentModel, TypeOfExistenceCheck.DoesExistInDB, RequestType.Delete);
+                        RecordExistsCheck(cmd, roleModel, TypeOfExistenceCheck.DoesExistInDB, RequestType.Delete);
                     }
-                    catch(DataAccessException e)
+                    catch (DataAccessException e)
                     {
-                        e.DataAccessStatusInfo.CustomMessage = "Department model could not be deleted because it could not be found in the database";
+                        e.DataAccessStatusInfo.CustomMessage = "Role model could not be deleted because it could not be found in the database";
                         e.DataAccessStatusInfo.ExceptionMessage = string.Copy(e.Message);
                         e.DataAccessStatusInfo.StackTrace = string.Copy(e.StackTrace);
 
@@ -313,16 +272,16 @@ namespace InfrastructureLayer.DataAccess.Repositories.Specific.Department
                     cmd.CommandText = deleteQuery;
 
                     cmd.Prepare();
-                    cmd.Parameters.AddWithValue("@DepartmentId", departmentModel.DepartmentId);
+                    cmd.Parameters.AddWithValue("@ID", roleModel.ID);
 
                     try
                     {
                         cmd.ExecuteNonQuery();
                     }
-                    catch(SqlException e)
+                    catch (SqlException e)
                     {
                         dataAccessStatus.setValues(status: "Error", operationSucceeded: false, exceptionMessage: e.Message,
-                        customMessage: "Unable to Delete Department Model.",
+                        customMessage: "Unable to Delete Roles Model.",
                         helpLink: e.HelpLink, errorCode: e.ErrorCode, stackTrace: e.StackTrace);
 
                         throw new DataAccessException(e.Message, e.InnerException, dataAccessStatus);
@@ -332,13 +291,13 @@ namespace InfrastructureLayer.DataAccess.Repositories.Specific.Department
 
                     try
                     {
-                        RecordExistsCheck(cmd, departmentModel, TypeOfExistenceCheck.DoesNotExistInDB, RequestType.ConfirmDelete);
+                        RecordExistsCheck(cmd, roleModel, TypeOfExistenceCheck.DoesNotExistInDB, RequestType.ConfirmDelete);
                     }
-                    catch(DataAccessException e)
+                    catch (DataAccessException e)
                     {
                         e.DataAccessStatusInfo.Status = "Error";
                         e.DataAccessStatusInfo.OperationSucceeded = false;
-                        e.DataAccessStatusInfo.CustomMessage = "Failed to delete Department model in database";
+                        e.DataAccessStatusInfo.CustomMessage = "Failed to role Department model in database";
                         e.DataAccessStatusInfo.ExceptionMessage = string.Copy(e.Message);
                         e.DataAccessStatusInfo.StackTrace = string.Copy(e.StackTrace);
 
@@ -347,45 +306,44 @@ namespace InfrastructureLayer.DataAccess.Repositories.Specific.Department
                 }
                 sqlConnection.Close();
             }
-           
+
         }
 
-        public void Update(IDepartmentModel departmentModel)
+        public void Update(IRoleModel roleModel)
         {
             int result = -1;
+
             DataAccessStatus dataAccessStatus = new DataAccessStatus();
 
-            using(SqlConnection sqlConnection = new SqlConnection(connectionString))
+            using (SqlConnection sqlConnection = new SqlConnection(connectionString))
             {
                 try
                 {
                     sqlConnection.Open();
                 }
-                catch(SqlException e)
+                catch (SqlException e)
                 {
                     dataAccessStatus.setValues(status: "Error", operationSucceeded: false, exceptionMessage: e.Message,
-                       customMessage: "Unable to Update Department Model. Could not open database connection.",
+                       customMessage: "Unable to Update Role Model. Could not open database connection.",
                        helpLink: e.HelpLink, errorCode: e.ErrorCode, stackTrace: e.StackTrace);
 
                     throw new DataAccessException(e.Message, e.InnerException, dataAccessStatus);
                 }
 
                 string updateDepQuery =
-                    "UPDATE [Departments]" +
-                    "SET [Name] = @DepartmentName," +
-                    "[PhoneNumber] = @PhoneNumber ," +
-                    "[ManagerID] = @ManagerId " +
-                    "WHERE [ID] =  @DepartmentId ";
+                    "UPDATE [Roles] " +
+                    "SET [Name] = @Name " +
+                    "WHERE [ID] =  @ID ";
 
                 using (SqlCommand cmd = new SqlCommand(updateDepQuery, sqlConnection))
                 {
                     try
                     {
-                        RecordExistsCheck(cmd, departmentModel, TypeOfExistenceCheck.DoesExistInDB, RequestType.Update);
+                        RecordExistsCheck(cmd, roleModel, TypeOfExistenceCheck.DoesExistInDB, RequestType.Update);
                     }
-                    catch(DataAccessException e)
+                    catch (DataAccessException e)
                     {
-                        e.DataAccessStatusInfo.CustomMessage = "Department model could not be updated because it could not be found in the database";
+                        e.DataAccessStatusInfo.CustomMessage = "role model could not be updated because it could not be found in the database";
                         e.DataAccessStatusInfo.ExceptionMessage = string.Copy(e.Message);
                         e.DataAccessStatusInfo.StackTrace = string.Copy(e.StackTrace);
 
@@ -394,20 +352,8 @@ namespace InfrastructureLayer.DataAccess.Repositories.Specific.Department
 
                     cmd.CommandText = updateDepQuery;
 
-                    cmd.Parameters.Add("@DepartmentName", System.Data.SqlDbType.NVarChar, 40).Value = departmentModel.DepartmentName;
-                    cmd.Parameters.Add("@PhoneNumber", System.Data.SqlDbType.NVarChar, 20).Value = departmentModel.PhoneNumber;
-
-                    if(!(departmentModel.ManagerID == 0))
-                    {
-                        cmd.Parameters.Add("@ManagerId", System.Data.SqlDbType.Int).Value = Convert.ToInt32(departmentModel.ManagerID);
-
-                    }
-                    else
-                    {
-                        cmd.Parameters.Add("@ManagerId", System.Data.SqlDbType.Int).Value = DBNull.Value;
-
-                    }
-                    cmd.Parameters.Add("@DepartmentId", System.Data.SqlDbType.Int).Value = Convert.ToInt32(departmentModel.DepartmentId);
+                    cmd.Parameters.Add("@Name", System.Data.SqlDbType.VarChar, 40).Value = roleModel.Name;
+                    cmd.Parameters.Add("@ID", System.Data.SqlDbType.Int).Value = Convert.ToInt32(roleModel.ID);
 
                     cmd.Prepare();
 
@@ -416,10 +362,10 @@ namespace InfrastructureLayer.DataAccess.Repositories.Specific.Department
                     {
                         result = cmd.ExecuteNonQuery();
                     }
-                    catch(SqlException e)
+                    catch (SqlException e)
                     {
                         dataAccessStatus.setValues(status: "Error", operationSucceeded: false, exceptionMessage: e.Message,
-                        customMessage: "Unable to Update Department Model.",
+                        customMessage: "Unable to Update Role Model.",
                         helpLink: e.HelpLink, errorCode: e.ErrorCode, stackTrace: e.StackTrace);
 
                         throw new DataAccessException(e.Message, e.InnerException, dataAccessStatus);
@@ -430,10 +376,10 @@ namespace InfrastructureLayer.DataAccess.Repositories.Specific.Department
             }
         }
 
-        private bool RecordExistsCheck(SqlCommand cmd, IDepartmentModel departmentModel, TypeOfExistenceCheck typeOfExistenceCheck,
+        private bool RecordExistsCheck(SqlCommand cmd, IRoleModel roleModel, TypeOfExistenceCheck typeOfExistenceCheck,
             RequestType requestType)
         {
-            
+
 
             Int32 count0fRecordsFound = 0;
             bool recordExistsCheckPassed = true;
@@ -441,17 +387,17 @@ namespace InfrastructureLayer.DataAccess.Repositories.Specific.Department
             DataAccessStatus dataAccessStatus = new DataAccessStatus();
             SqlCommand cmdCheck = new SqlCommand(null, cmd.Connection);
             cmdCheck.Prepare();
-            
 
-            if((requestType == RequestType.Add) || (requestType == RequestType.ConfirmAdd))
+
+            if ((requestType == RequestType.Add) || (requestType == RequestType.ConfirmAdd))
             {
-                cmdCheck.CommandText = "SELECT count(*) FROM [Departments] where [Name] = @DepName";
-                cmdCheck.Parameters.Add(new SqlParameter("@DepName", System.Data.SqlDbType.NVarChar,40)).Value = departmentModel.DepartmentName;
+                cmdCheck.CommandText = "SELECT count(*) FROM [Roles] where [Name] = @Name";
+                cmdCheck.Parameters.Add(new SqlParameter("@Name", System.Data.SqlDbType.VarChar, 20)).Value = roleModel.Name;
             }
-            else if((requestType == RequestType.Update) || (requestType == RequestType.Delete) || (requestType == RequestType.ConfirmDelete))
+            else if ((requestType == RequestType.Update) || (requestType == RequestType.Delete) || (requestType == RequestType.ConfirmDelete))
             {
-                cmdCheck.CommandText = "SELECT count(*) FROM [Departments] WHERE [ID] = @DepartId";
-                cmdCheck.Parameters.Add(new SqlParameter("@DepartId", departmentModel.DepartmentId));
+                cmdCheck.CommandText = "SELECT count(*) FROM [Roles] WHERE [ID] = @ID";
+                cmdCheck.Parameters.Add(new SqlParameter("@ID", roleModel.ID));
 
             }
 
@@ -459,20 +405,20 @@ namespace InfrastructureLayer.DataAccess.Repositories.Specific.Department
             {
                 count0fRecordsFound = Convert.ToInt32(cmdCheck.ExecuteScalar());
             }
-            catch(SqlException e)
+            catch (SqlException e)
             {
                 string msg = e.Message;
                 throw e;
             }
 
-            if((typeOfExistenceCheck == TypeOfExistenceCheck.DoesNotExistInDB) && (count0fRecordsFound > 0))
+            if ((typeOfExistenceCheck == TypeOfExistenceCheck.DoesNotExistInDB) && (count0fRecordsFound > 0))
             {
                 dataAccessStatus.Status = "Error";
                 recordExistsCheckPassed = false;
 
                 throw new DataAccessException(dataAccessStatus);
             }
-            else if((typeOfExistenceCheck == TypeOfExistenceCheck.DoesExistInDB) && (count0fRecordsFound == 0))
+            else if ((typeOfExistenceCheck == TypeOfExistenceCheck.DoesExistInDB) && (count0fRecordsFound == 0))
             {
                 dataAccessStatus.Status = "Error";
                 recordExistsCheckPassed = false;
