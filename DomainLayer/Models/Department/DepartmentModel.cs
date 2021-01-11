@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using DomainLayer.Models.Location;
 
 namespace DomainLayer.Models.Department
 {
@@ -7,6 +6,7 @@ namespace DomainLayer.Models.Department
     {
 
         public int DepartmentId { get; set; }
+
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "Department name is required field")]
         [StringLength(40, MinimumLength = 5, ErrorMessage = "Department name must be between 5 and 40 characters")]

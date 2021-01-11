@@ -42,10 +42,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Account\AccountModel.cs" />
+    <Compile Include="Models\Account\IAccountModel.cs" />
+    <Compile Include="Models\Attendence\AttendenceModel.cs" />
+    <Compile Include="Models\Attendence\IAttendenceModel.cs" />
+    <Compile Include="Models\Contract\ContractModel.cs" />
+    <Compile Include="Models\Contract\IContractModel.cs" />
     <Compile Include="Models\Department\DepartmentModel.cs" />
     <Compile Include="Models\Department\IDepartmentModel.cs" />
+    <Compile Include="Models\Employee\EmployeeModel.cs" />
+    <Compile Include="Models\Employee\IEmployeeModel.cs" />
+    <Compile Include="Models\JobDescription\IJobModel.cs" />
+    <Compile Include="Models\JobDescription\JobModel.cs" />
     <Compile Include="Models\Location\ILocationModel.cs" />
     <Compile Include="Models\Location\LocationModel.cs" />
+    <Compile Include="Models\Paycheck\IPaycheckModel.cs" />
+    <Compile Include="Models\Paycheck\PaycheckModel.cs" />
+    <Compile Include="Models\Payroll\IPayrollModel.cs" />
+    <Compile Include="Models\Payroll\PayrollModel.cs" />
     <Compile Include="Models\Role\IRoleModel.cs" />
     <Compile Include="Models\Role\RoleModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
