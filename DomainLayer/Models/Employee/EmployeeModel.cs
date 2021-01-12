@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DomainLayer.Models
 {
-    class EmployeeModel : IEmployeeModel
+    public class EmployeeModel : IEmployeeModel
     {
 
         public int ID { get; set; }
@@ -26,8 +26,6 @@ namespace DomainLayer.Models
 
         [Required(ErrorMessage = "Date of birth is required field")]
         public DateTime DOB { get; set; }
-
-        public int Age { get; set; }
 
         [Required(ErrorMessage = "Select a gender")]
         [RegularExpression(@"^male$|^female$", ErrorMessage = "Gender can only be either a male or a female.")]

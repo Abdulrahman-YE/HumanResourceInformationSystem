@@ -48,6 +48,9 @@
     <Compile Include="Services\DepartmentServices\DepartmentServices.cs" />
     <Compile Include="Services\DepartmentServices\IDepartmentRepository.cs" />
     <Compile Include="Services\DepartmentServices\IDepartmentServices.cs" />
+    <Compile Include="Services\EmployeeServices\EmployeeServices.cs" />
+    <Compile Include="Services\EmployeeServices\IEmployeeRepository.cs" />
+    <Compile Include="Services\EmployeeServices\IEmployeeServices.cs" />
     <Compile Include="Services\LocationServices\ILocationRepository.cs" />
     <Compile Include="Services\LocationServices\ILocationServices.cs" />
     <Compile Include="Services\LocationServices\LocationServices.cs" />

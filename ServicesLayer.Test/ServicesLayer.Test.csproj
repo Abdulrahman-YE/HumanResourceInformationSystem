@@ -63,6 +63,7 @@
     <Compile Include="DepartmentTests\DepartmentServicesDataAccessTests.cs" />
     <Compile Include="DepartmentTests\DepartmentServicesFixture.cs" />
     <Compile Include="DepartmentTests\DepartmentsServicesValidationTests.cs" />
+    <Compile Include="EmployeeTests\EmployeeServicesDataAccessTests.cs" />
     <Compile Include="LocationTests\LocationServicesFixture.cs" />
     <Compile Include="LocationTests\LocationServicesValidationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

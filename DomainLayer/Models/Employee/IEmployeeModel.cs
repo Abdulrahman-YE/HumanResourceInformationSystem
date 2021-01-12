@@ -2,10 +2,9 @@
 
 namespace DomainLayer.Models
 {
-    interface IEmployeeModel
+    public interface IEmployeeModel
     {
         string Address { get; set; }
-        int Age { get; set; }
         string Country { get; set; }
         int DepartmentID { get; set; }
         DateTime DOB { get; set; }
