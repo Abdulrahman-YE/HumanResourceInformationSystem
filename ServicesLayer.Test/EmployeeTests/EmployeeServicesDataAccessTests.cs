@@ -24,12 +24,14 @@ namespace ServicesLayer.Test.EmployeeTests
         private readonly ITestOutputHelper testOutputHelper;
         private string connectionString;
         private EmployeeServices employeeServices;
-
+        private int testNum = 0;
         public EmployeeServicesDataAccessTests(ITestOutputHelper testOutputHelper)
         {
             connectionString = Properties.Settings.Default.connectionStr;
             employeeServices = new EmployeeServices(new EmployeeRepository(connectionString), new ModelDataAnnotationCheck());
             this.testOutputHelper = testOutputHelper;
+            testNum = new Random().Next();
+            
         }
 
         [Fact]
@@ -42,8 +44,8 @@ namespace ServicesLayer.Test.EmployeeTests
             foreach (EmployeeModel em in employees)
             {
                 testOutputHelper.WriteLine($"ID: {em.ID}\nName: {em.Fullname}\nPhone Number: {em.PhoneNumber}\nAddress: {em.Address}" +
-                    $"\nGender: {em.Gender}\nStatus: {em.Status}\nDate of Birth: {em.DOB.Date}\nEmail: {em.Email}\nCountry: {em.Country}\nPhoto: {em.PersonalPhoto.ToString()}" +
-                    $"\nDepartment ID: {em.DepartmentID}");
+                    $"\nGender: {em.Gender}\nStatus: {em.Status}\nDate of Birth: {em.DOB.Date}\nEmail: {em.Email}\nCountry: {em.Country}\nPhoto: {em.PersonalPhoto.Length}" +
+                    $"\nHireDate: {em.HireDate.Date}\nPosition: {em.Position}\nDepartment ID: {em.DepartmentID}");
             }
         }
 
@@ -51,7 +53,7 @@ namespace ServicesLayer.Test.EmployeeTests
         public void ShouldReturnEmployeeByID()
         {
             EmployeeModel employee = null;
-            int idToGet = 1;
+            int idToGet = 3;
 
             try
             {
@@ -84,11 +86,12 @@ namespace ServicesLayer.Test.EmployeeTests
             employee.Address = "Al-Asbahi St.";
             employee.DOB = DateTime.Now;
             employee.Country = "Yemen";
-            employee.Email = "Abdulrahman2@gmail.com";
+            employee.Email = "Abdulrahman"+ testNum.ToString() +"@gmail.com";
             employee.Gender = "male";
+            employee.Position = "Worker";
             employee.Status = "divorced";
 
-            FileInfo fileinfo = new FileInfo("C:\\Users\\alwani\\Downloads\\Wallpaper\\study-group.jpg");
+            FileInfo fileinfo = new FileInfo("C:\\Users\\alwani\\Downloads\\Wallpaper\\18397.jpg");
             byte[] imageByte = new byte[fileinfo.Length];
 
             using (FileStream fs = fileinfo.OpenRead())
@@ -96,7 +99,6 @@ namespace ServicesLayer.Test.EmployeeTests
                 fs.Read(imageByte, 0, imageByte.Length);
             }
 
-            fileinfo.Delete();
             employee.PersonalPhoto = imageByte;
            
             
@@ -135,17 +137,18 @@ namespace ServicesLayer.Test.EmployeeTests
         public void ShouldReturnSuccessForUpdate()
         {
             EmployeeModel employee = new EmployeeModel();
-            employee.ID = 2;
+            employee.ID = 3 ;
             employee.Fullname = "Unit Test Update";
             employee.PhoneNumber = "+96777272727";
             employee.Address = "Al-Asbahi St.";
             employee.DOB = DateTime.Now;
             employee.Country = "Yemen";
-            employee.Email = "Abdulrahman2@gmail.com";
+            employee.Email = "Abdulrahman893111334@gmail.com";
             employee.Gender = "male";
             employee.Status = "divorced";
+            employee.Position = "Not Worker";
 
-            FileInfo fileinfo = new FileInfo("C:\\Users\\alwani\\Downloads\\Wallpaper\\106774.jpg");
+            FileInfo fileinfo = new FileInfo("C:\\Users\\alwani\\Downloads\\Wallpaper\\18397.jpg");
             byte[] imageByte = new byte[fileinfo.Length];
 
             using (FileStream fs = fileinfo.OpenRead())

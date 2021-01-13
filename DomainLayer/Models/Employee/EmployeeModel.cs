@@ -44,7 +44,11 @@ namespace DomainLayer.Models
 
         public Byte[] PersonalPhoto { get; set; }
 
+        public DateTime HireDate { get; set; }
 
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Position is required")]
+        [StringLength(20, MinimumLength = 2, ErrorMessage = "Position length should be between 2 and 20 characters.")]
+        public string Position { get; set; }
         public int DepartmentID { get; set; }
 
     }

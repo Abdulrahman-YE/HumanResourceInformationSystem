@@ -13,6 +13,9 @@ namespace DomainLayer.Models
         string Gender { get; set; }
         int ID { get; set; }
         byte[] PersonalPhoto { get; set; }
+        DateTime HireDate { get; set; }
+        string Position { get; set; }
+
         string PhoneNumber { get; set; }
         string Status { get; set; }
     }
