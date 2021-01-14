@@ -60,6 +60,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccountTests\AccountServicesDataAccessTests.cs" />
     <Compile Include="DepartmentTests\DepartmentServicesDataAccessTests.cs" />
     <Compile Include="DepartmentTests\DepartmentServicesFixture.cs" />
     <Compile Include="DepartmentTests\DepartmentsServicesValidationTests.cs" />

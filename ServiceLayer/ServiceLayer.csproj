@@ -45,6 +45,9 @@
     <Compile Include="CommonServices\IModelDataAnnotationCheck.cs" />
     <Compile Include="CommonServices\ModelDataAnnotationCheck.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\AccountServices\AccountServices.cs" />
+    <Compile Include="Services\AccountServices\IAccountRepository.cs" />
+    <Compile Include="Services\AccountServices\IAccountServices.cs" />
     <Compile Include="Services\DepartmentServices\DepartmentServices.cs" />
     <Compile Include="Services\DepartmentServices\IDepartmentRepository.cs" />
     <Compile Include="Services\DepartmentServices\IDepartmentServices.cs" />

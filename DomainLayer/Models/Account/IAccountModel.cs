@@ -1,6 +1,6 @@
 ﻿namespace DomainLayer.Models.Account
 {
-    interface IAccountModel
+    public interface IAccountModel
     {
         int EmployeeID { get; set; }
         int ID { get; set; }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DomainLayer.Models.Account
 {
-    class AccountModel : IAccountModel
+    public class AccountModel : IAccountModel
     {
 
         public int ID { get; set; }
@@ -19,7 +19,9 @@ namespace DomainLayer.Models.Account
         [Required(AllowEmptyStrings = false, ErrorMessage = "Password is a required field")]
         [StringLength(60, MinimumLength = 8, ErrorMessage = "Password must contain more than 8 characters.")]
         public string Password { get; set; }
+        [Required(ErrorMessage = "Please specify the account role")]
         public int RoleID { get; set; }
+        [Required(ErrorMessage = "Please specify the account owner")]
         public int EmployeeID { get; set; }
     }
 }
