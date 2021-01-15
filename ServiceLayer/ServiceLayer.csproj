@@ -57,6 +57,9 @@
     <Compile Include="Services\LocationServices\ILocationRepository.cs" />
     <Compile Include="Services\LocationServices\ILocationServices.cs" />
     <Compile Include="Services\LocationServices\LocationServices.cs" />
+    <Compile Include="Services\PyrollServices\IPayrollRepository.cs" />
+    <Compile Include="Services\PyrollServices\IPayrollServices.cs" />
+    <Compile Include="Services\PyrollServices\PayrollServices.cs" />
     <Compile Include="Services\RoleServices\IRoleRepository.cs" />
     <Compile Include="Services\RoleServices\IRoleServices.cs" />
     <Compile Include="Services\RoleServices\RoleServices.cs" />

@@ -1,20 +1,18 @@
 ﻿using CommonComponents;
-using DomainLayer.Models.Account;
+using DomainLayer.Models.Payroll;
+using ServiceLayer.Services.PyrollServices;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
-using ServiceLayer.Services;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ServiceLayer.Services.AccountServices;
-using System.Data;
 
-namespace InfrastructureLayer.DataAccess.Repositories.Account
+namespace InfrastructureLayer.DataAccess.Repositories.Payroll
 {
-    public class AccountRepository : IAccountRepository
+    class PayrollRepository : IPayrollRepository
     {
-
         protected string connectionString = Properties.Settings.Default.connectionStr;
 
         /// <summary>
@@ -39,16 +37,16 @@ namespace InfrastructureLayer.DataAccess.Repositories.Account
 
 
 
-        public AccountRepository()
+        public PayrollRepository()
         {
 
         }
 
-        public AccountRepository(string connectionString)
+        public PayrollRepository(string connectionString)
         {
             this.connectionString = connectionString;
         }
-        public void Add(IAccountModel model)
+        public void Add(IPayrollModel model)
         {
             DataAccessStatus dataAccessStatus = new DataAccessStatus();
 
@@ -63,7 +61,7 @@ namespace InfrastructureLayer.DataAccess.Repositories.Account
                 catch (SqlException e)
                 {
                     dataAccessStatus.setValues(status: "Error", operationSucceeded: false, exceptionMessage: e.Message,
-                        customMessage: "Unable to add Account. Could not open a database connection", helpLink: e.HelpLink, errorCode: e.ErrorCode,
+                        customMessage: "Unable to add Payroll. Could not open a database connection", helpLink: e.HelpLink, errorCode: e.ErrorCode,
                         stackTrace: e.StackTrace);
 
                     throw new DataAccessException(e.Message, e.InnerException, dataAccessStatus);
@@ -71,8 +69,8 @@ namespace InfrastructureLayer.DataAccess.Repositories.Account
                 }
 
                 string addQuery =
-                    "INSERT INTO Accounts (Username, Password, EmployeeID, RoleID) " +
-                    "VALUES (@User, @Password, @EmployeeID, @RoleID)";
+                    "INSERT INTO Payrolls (GrossPay, NetPay, EmployeeID) " +
+                    "VALUES (@GrossPay, @NetPay, @EmployeeID)";
 
                 using (SqlCommand cmd = new SqlCommand(null, sqlConnection))
                 {
@@ -83,7 +81,7 @@ namespace InfrastructureLayer.DataAccess.Repositories.Account
                     }
                     catch (DataAccessException e)
                     {
-                        e.DataAccessStatusInfo.CustomMessage = "Account could not be added because the username already exists.";
+                        e.DataAccessStatusInfo.CustomMessage = "Payroll could not be added because the employee has already payroll.";
                         e.DataAccessStatusInfo.ExceptionMessage = string.Copy(e.Message);
                         e.DataAccessStatusInfo.StackTrace = string.Copy(e.StackTrace);
 
@@ -92,20 +90,9 @@ namespace InfrastructureLayer.DataAccess.Repositories.Account
 
                     cmd.CommandText = addQuery;
 
-                    SqlParameter username = new SqlParameter("@User", System.Data.SqlDbType.VarChar);
-                    SqlParameter password = new SqlParameter("@Password", System.Data.SqlDbType.VarChar);
-                    SqlParameter employee = new SqlParameter("@EmployeeID", System.Data.SqlDbType.Int);
-                    SqlParameter role = new SqlParameter("@RoleID", System.Data.SqlDbType.Int);
-
-                    username.Value = model.Username;
-                    password.Value = model.Password;
-                    employee.Value = Convert.ToInt32(model.EmployeeID);
-                    role.Value = Convert.ToInt32(model.RoleID);
-
-                    cmd.Parameters.Add(username);
-                    cmd.Parameters.Add(password);
-                    cmd.Parameters.Add(employee);
-                    cmd.Parameters.Add(role);
+                    cmd.Parameters.AddWithValue("@GrossPay", model.GrossPay).SqlDbType = SqlDbType.Int;
+                    cmd.Parameters.AddWithValue("@NetPay", model.NetPay).SqlDbType = SqlDbType.Int;
+                    cmd.Parameters.AddWithValue("@EmployeeID", model.EmployeeID).SqlDbType = SqlDbType.Int;
 
                     try
                     {
@@ -114,13 +101,13 @@ namespace InfrastructureLayer.DataAccess.Repositories.Account
                     catch (SqlException e)
                     {
                         dataAccessStatus.setValues(status: "Error", operationSucceeded: false, exceptionMessage: e.Message,
-                        customMessage: "Unable to add the account.", helpLink: e.HelpLink, errorCode: e.ErrorCode,
+                        customMessage: "Unable to add the payroll.", helpLink: e.HelpLink, errorCode: e.ErrorCode,
                         stackTrace: e.StackTrace);
 
                         throw new DataAccessException(e.Message, e.InnerException, dataAccessStatus);
                     }
 
-                    //Confirm the Account Model was Added to the database
+                    //Confirm the Payroll Model was Added to the database
                     try
                     {
                         RecordExistsCheck(cmd, model, TypeOfExistenceCheck.DoesExistInDB, RequestType.ConfirmAdd);
@@ -129,7 +116,7 @@ namespace InfrastructureLayer.DataAccess.Repositories.Account
                     {
                         e.DataAccessStatusInfo.Status = "Error";
                         e.DataAccessStatusInfo.OperationSucceeded = false;
-                        e.DataAccessStatusInfo.CustomMessage = "Failed to find the account in database after add operation completed.";
+                        e.DataAccessStatusInfo.CustomMessage = "Failed to find the payroll in database after add operation completed.";
                         e.DataAccessStatusInfo.ExceptionMessage = string.Copy(e.Message);
                         e.DataAccessStatusInfo.StackTrace = string.Copy(e.StackTrace);
 
@@ -144,9 +131,9 @@ namespace InfrastructureLayer.DataAccess.Repositories.Account
 
         }
 
-        public IEnumerable<IAccountModel> GetAll()
+        public IEnumerable<IPayrollModel> GetAll()
         {
-            List<AccountModel> departmentModels = new List<AccountModel>();
+            List<IPayrollModel> payrolls = new List<IPayrollModel>();
             DataAccessStatus dataAccessStatus = new DataAccessStatus();
 
             using (SqlConnection sqlConnection = new SqlConnection(this.connectionString))
@@ -155,7 +142,7 @@ namespace InfrastructureLayer.DataAccess.Repositories.Account
                 {
                     sqlConnection.Open();
 
-                    string selectAllQuery = "Select * FROM Accounts";
+                    string selectAllQuery = "Select * FROM Payrolls";
 
 
                     using (SqlCommand cmd = new SqlCommand(selectAllQuery, sqlConnection))
@@ -164,14 +151,13 @@ namespace InfrastructureLayer.DataAccess.Repositories.Account
                         {
                             while (reader.Read())
                             {
-                                AccountModel account = new AccountModel();
-                                account.ID = Int32.Parse(reader["ID"].ToString());
-                                account.Username = reader["Username"].ToString();
-                                account.Password = reader["Password"].ToString();
-                                account.EmployeeID = Int32.Parse(reader["EmployeeID"].ToString());
-                                account.RoleID = Int32.Parse(reader["RoleID"].ToString());
+                                PayrollModel payroll = new PayrollModel();
+                                payroll.ID = Int32.Parse(reader["ID"].ToString());
+                                payroll.GrossPay = Int32.Parse(reader["GrosSPay"].ToString());
+                                payroll.NetPay = Int32.Parse(reader["NetPay"].ToString());
+                                payroll.EmployeeID = Int32.Parse(reader["EmployeeID"].ToString());
 
-                                departmentModels.Add(account);
+                                payrolls.Add(payroll);
                             }
                         }
                     }
@@ -180,22 +166,22 @@ namespace InfrastructureLayer.DataAccess.Repositories.Account
                 catch (SqlException e)
                 {
                     dataAccessStatus.setValues(status: "Error", operationSucceeded: false, exceptionMessage: e.Message,
-                        customMessage: "Unable to get Accounts list from database", helpLink: e.HelpLink, errorCode: e.ErrorCode,
+                        customMessage: "Unable to get Payrolls list from database", helpLink: e.HelpLink, errorCode: e.ErrorCode,
                         stackTrace: e.StackTrace);
 
                     throw new DataAccessException(e.Message, e.InnerException, dataAccessStatus);
                 }
-                return departmentModels;
+                return payrolls;
             }
         }
 
-        public AccountModel GetByID(int id)
+        public PayrollModel GetByID(int id)
         {
-            AccountModel account = new AccountModel();
+            PayrollModel payroll = new PayrollModel();
             DataAccessStatus dataAccessStatus = new DataAccessStatus();
             bool matchingRecoredFound = false;
-            string selectByIdQuery = "SELECT Username, Password, EmployeeID, RoleID " +
-                "FROM Accounts WHERE ID = @ID";
+            string selectByIdQuery = "SELECT GrossPay, NetPay, EmployeeID " +
+                "FROM Payrolls WHERE ID = @ID";
 
             using (SqlConnection sqlConnection = new SqlConnection(this.connectionString))
             {
@@ -214,11 +200,10 @@ namespace InfrastructureLayer.DataAccess.Repositories.Account
                             matchingRecoredFound = reader.HasRows;
                             while (reader.Read())
                             {
-                                account.ID = id;
-                                account.Username = reader["Username"].ToString();
-                                account.Password = reader["Password"].ToString();
-                                account.EmployeeID = Convert.ToInt32(reader["EmployeeID"].ToString());
-                                account.RoleID = Convert.ToInt32(reader["RoleID"].ToString());
+                                payroll.ID = id;
+                                payroll.GrossPay = Convert.ToInt32(reader["GrossPay"].ToString());
+                                payroll.NetPay = Convert.ToInt32(reader["NetPay"].ToString());
+                                payroll.EmployeeID = Convert.ToInt32(reader["EmployeeID"].ToString());
                             }
 
                         }
@@ -229,7 +214,7 @@ namespace InfrastructureLayer.DataAccess.Repositories.Account
                 catch (SqlException e)
                 {
                     dataAccessStatus.setValues(status: "Error", operationSucceeded: false, exceptionMessage: e.Message,
-                       customMessage: "Unable to get the account record from database", helpLink: e.HelpLink, errorCode: e.ErrorCode,
+                       customMessage: "Unable to get the payroll record from database", helpLink: e.HelpLink, errorCode: e.ErrorCode,
                        stackTrace: e.StackTrace);
 
                     throw new DataAccessException(e.Message, e.InnerException, dataAccessStatus);
@@ -238,21 +223,18 @@ namespace InfrastructureLayer.DataAccess.Repositories.Account
                 if (!matchingRecoredFound)
                 {
                     dataAccessStatus.setValues(status: "Error", operationSucceeded: false, exceptionMessage: "",
-                      customMessage: $"Record not found!. Unable to get account record for with id {id}. Id {id} does not exist in the database.", helpLink: "", errorCode: 0,
+                      customMessage: $"Record not found!. Unable to get payroll record with id {id}. Id {id} does not exist in the database.", helpLink: "", errorCode: 0,
                       stackTrace: "");
 
                     throw new DataAccessException(dataAccessStatus);
                 }
-
-                return account;
+                return payroll;
             }
-
-
         }
 
 
 
-        public void Remove(IAccountModel model)
+        public void Remove(IPayrollModel model)
         {
             DataAccessStatus dataAccessStatus = new DataAccessStatus();
 
@@ -266,13 +248,13 @@ namespace InfrastructureLayer.DataAccess.Repositories.Account
                 catch (SqlException e)
                 {
                     dataAccessStatus.setValues(status: "Error", operationSucceeded: false, exceptionMessage: e.Message,
-                        customMessage: "Unable to Delete The Account. Could not open database connection.",
+                        customMessage: "Unable to Delete The Payroll. Could not open database connection.",
                         helpLink: e.HelpLink, errorCode: e.ErrorCode, stackTrace: e.StackTrace);
 
                     throw new DataAccessException(e.Message, e.InnerException, dataAccessStatus);
                 }
 
-                string deleteQuery = "DELETE FROM Accounts WHERE ID = @ID";
+                string deleteQuery = "DELETE FROM Payrolls WHERE ID = @ID";
 
                 using (SqlCommand cmd = new SqlCommand(deleteQuery, sqlConnection))
                 {
@@ -283,7 +265,7 @@ namespace InfrastructureLayer.DataAccess.Repositories.Account
                     }
                     catch (DataAccessException e)
                     {
-                        e.DataAccessStatusInfo.CustomMessage = "Account "+ model.Username +" could not be deleted because it could not be found in the database";
+                        e.DataAccessStatusInfo.CustomMessage = "Payroll could not be deleted because it could not be found in the database";
                         e.DataAccessStatusInfo.ExceptionMessage = string.Copy(e.Message);
                         e.DataAccessStatusInfo.StackTrace = string.Copy(e.StackTrace);
 
@@ -302,13 +284,13 @@ namespace InfrastructureLayer.DataAccess.Repositories.Account
                     catch (SqlException e)
                     {
                         dataAccessStatus.setValues(status: "Error", operationSucceeded: false, exceptionMessage: e.Message,
-                        customMessage: "Unable to Delete The Account.",
+                        customMessage: "Unable to Delete The Payroll.",
                         helpLink: e.HelpLink, errorCode: e.ErrorCode, stackTrace: e.StackTrace);
 
                         throw new DataAccessException(e.Message, e.InnerException, dataAccessStatus);
                     }
 
-                    //Confirm that the department model has been deleted
+                    //Confirm that the Payroll model has been deleted
 
                     try
                     {
@@ -318,7 +300,7 @@ namespace InfrastructureLayer.DataAccess.Repositories.Account
                     {
                         e.DataAccessStatusInfo.Status = "Error";
                         e.DataAccessStatusInfo.OperationSucceeded = false;
-                        e.DataAccessStatusInfo.CustomMessage = "Failed to Delete The Account in Database";
+                        e.DataAccessStatusInfo.CustomMessage = "Failed to Delete The Payroll in Database";
                         e.DataAccessStatusInfo.ExceptionMessage = string.Copy(e.Message);
                         e.DataAccessStatusInfo.StackTrace = string.Copy(e.StackTrace);
 
@@ -330,7 +312,7 @@ namespace InfrastructureLayer.DataAccess.Repositories.Account
 
         }
 
-        public void Update(IAccountModel model)
+        public void Update(IPayrollModel model)
         {
             int result = -1;
             DataAccessStatus dataAccessStatus = new DataAccessStatus();
@@ -344,18 +326,17 @@ namespace InfrastructureLayer.DataAccess.Repositories.Account
                 catch (SqlException e)
                 {
                     dataAccessStatus.setValues(status: "Error", operationSucceeded: false, exceptionMessage: e.Message,
-                       customMessage: "Unable to Update Acocunt "+ model.Username+". Could not open database connection.",
+                       customMessage: "Unable to Update Payroll. Could not open database connection.",
                        helpLink: e.HelpLink, errorCode: e.ErrorCode, stackTrace: e.StackTrace);
 
                     throw new DataAccessException(e.Message, e.InnerException, dataAccessStatus);
                 }
 
                 string updateDepQuery =
-                    "UPDATE Accounts " +
-                    "SET Username = @User, " +
-                    "Password = @Password, " +
+                    "UPDATE Payroll " +
+                    "SET GrossPay = @GrossPay, " +
+                    "NetPay = @NetPay, " +
                     "EmployeeID = @EmployeeID, " +
-                    "RoleID = @RoleID " +
                     "WHERE ID =  @ID";
 
                 using (SqlCommand cmd = new SqlCommand(updateDepQuery, sqlConnection))
@@ -366,7 +347,7 @@ namespace InfrastructureLayer.DataAccess.Repositories.Account
                     }
                     catch (DataAccessException e)
                     {
-                        e.DataAccessStatusInfo.CustomMessage = "Account "+ model.Username+" could not be updated because it could not be found in the database";
+                        e.DataAccessStatusInfo.CustomMessage = "Payroll could not be updated because it could not be found in the database";
                         e.DataAccessStatusInfo.ExceptionMessage = string.Copy(e.Message);
                         e.DataAccessStatusInfo.StackTrace = string.Copy(e.StackTrace);
 
@@ -374,19 +355,13 @@ namespace InfrastructureLayer.DataAccess.Repositories.Account
                     }
 
                     cmd.CommandText = updateDepQuery;
-                    SqlParameter user = new SqlParameter("@User", SqlDbType.VarChar, 20);
-                    user.Value = model.Username;
-                    SqlParameter password = new SqlParameter("@Password", SqlDbType.VarChar, 50);
-                    password.Value = model.Password;
 
-                    cmd.Parameters.Add(user);
-                    cmd.Parameters.Add(password);
+                    cmd.Parameters.AddWithValue("@GrossPay", model.GrossPay).SqlDbType = SqlDbType.Int;
+                    cmd.Parameters.AddWithValue("@NetPay", model.NetPay).SqlDbType = SqlDbType.Int;
                     cmd.Parameters.AddWithValue("@EmployeeID", model.EmployeeID).SqlDbType = SqlDbType.Int;
-                    cmd.Parameters.AddWithValue("@RoleID", model.RoleID).SqlDbType = SqlDbType.Int;
                     cmd.Parameters.AddWithValue("@ID", model.ID).SqlDbType = SqlDbType.Int;
 
                     cmd.Prepare();
-
                     try
                     {
                         result = cmd.ExecuteNonQuery();
@@ -394,7 +369,7 @@ namespace InfrastructureLayer.DataAccess.Repositories.Account
                     catch (SqlException e)
                     {
                         dataAccessStatus.setValues(status: "Error", operationSucceeded: false, exceptionMessage: e.Message,
-                        customMessage: "Unable to Update The Account",
+                        customMessage: "Unable to Update The Payroll",
                         helpLink: e.HelpLink, errorCode: e.ErrorCode, stackTrace: e.StackTrace);
 
                         throw new DataAccessException(e.Message, e.InnerException, dataAccessStatus);
@@ -405,13 +380,13 @@ namespace InfrastructureLayer.DataAccess.Repositories.Account
             }
         }
 
-        public AccountModel GetByUsername(string username)
+        public PayrollModel GetByEmployee(int employeeID)
         {
-            AccountModel account = new AccountModel();
+            PayrollModel account = new PayrollModel();
             DataAccessStatus dataAccessStatus = new DataAccessStatus();
             bool matchingRecoredFound = false;
-            string selectByIdQuery = "SELECT ID, Password, EmployeeID, RoleID " +
-                "FROM Accounts WHERE Username = @User";
+            string selectByIdQuery = "SELECT ID, GrossPay, NetPay" +
+                "FROM Payrolls WHERE EmployeeID = @EmpID";
 
             using (SqlConnection sqlConnection = new SqlConnection(this.connectionString))
             {
@@ -423,7 +398,7 @@ namespace InfrastructureLayer.DataAccess.Repositories.Account
                     {
                         cmd.CommandText = selectByIdQuery;
                         cmd.Prepare();
-                        cmd.Parameters.Add(new SqlParameter("@User", username));
+                        cmd.Parameters.Add(new SqlParameter("@EmpID", employeeID));
 
                         using (SqlDataReader reader = cmd.ExecuteReader())
                         {
@@ -431,10 +406,9 @@ namespace InfrastructureLayer.DataAccess.Repositories.Account
                             while (reader.Read())
                             {
                                 account.ID = Convert.ToInt32(reader["ID"].ToString());
-                                account.Username = username;
-                                account.Password = reader["Password"].ToString();
-                                account.EmployeeID = Convert.ToInt32(reader["EmployeeID"].ToString());
-                                account.RoleID = Convert.ToInt32(reader["RoleID"].ToString());
+                                account.EmployeeID = employeeID;
+                                account.GrossPay = Convert.ToInt32(reader["GrossPay"].ToString());
+                                account.NetPay = Convert.ToInt32(reader["NetPay"].ToString());
                             }
 
                         }
@@ -445,7 +419,7 @@ namespace InfrastructureLayer.DataAccess.Repositories.Account
                 catch (SqlException e)
                 {
                     dataAccessStatus.setValues(status: "Error", operationSucceeded: false, exceptionMessage: e.Message,
-                       customMessage: "Unable to get the account record from database", helpLink: e.HelpLink, errorCode: e.ErrorCode,
+                       customMessage: "Unable to get the Payroll record from database", helpLink: e.HelpLink, errorCode: e.ErrorCode,
                        stackTrace: e.StackTrace);
 
                     throw new DataAccessException(e.Message, e.InnerException, dataAccessStatus);
@@ -454,7 +428,7 @@ namespace InfrastructureLayer.DataAccess.Repositories.Account
                 if (!matchingRecoredFound)
                 {
                     dataAccessStatus.setValues(status: "Error", operationSucceeded: false, exceptionMessage: "",
-                      customMessage: $"Record not found!. Unable to get account record for with username : {username}. {username} does not exist in the database.", helpLink: "", errorCode: 0,
+                      customMessage: $"Record not found!. Unable to get Payroll record for with employee id: {employeeID}.It does not exist in the database.", helpLink: "", errorCode: 0,
                       stackTrace: "");
 
                     throw new DataAccessException(dataAccessStatus);
@@ -464,12 +438,12 @@ namespace InfrastructureLayer.DataAccess.Repositories.Account
             }
         }
 
-            private bool RecordExistsCheck(
-            SqlCommand cmd,
-            IAccountModel model,
-            TypeOfExistenceCheck typeOfExistenceCheck,
-            RequestType requestType
-            )
+        private bool RecordExistsCheck(
+        SqlCommand cmd,
+        IPayrollModel model,
+        TypeOfExistenceCheck typeOfExistenceCheck,
+        RequestType requestType
+        )
         {
             Int32 count0fRecordsFound = 0;
             bool recordExistsCheckPassed = true;
@@ -480,12 +454,12 @@ namespace InfrastructureLayer.DataAccess.Repositories.Account
 
             if ((requestType == RequestType.Add) || (requestType == RequestType.ConfirmAdd))
             {
-                cmdCheck.CommandText = "SELECT count(*) FROM Accounts where Username = @User";
-                cmdCheck.Parameters.AddWithValue("@User", model.Username);
+                cmdCheck.CommandText = "SELECT count(*) FROM Payrolls where EmployeeID = @EmployeeID";
+                cmdCheck.Parameters.AddWithValue("@EmployeeID", model.EmployeeID);
             }
             else if ((requestType == RequestType.Update) || (requestType == RequestType.Delete) || (requestType == RequestType.ConfirmDelete))
             {
-                cmdCheck.CommandText = "SELECT count(*) FROM Accounts WHERE ID = @ID";
+                cmdCheck.CommandText = "SELECT count(*) FROM Payrolls WHERE ID = @ID";
                 cmdCheck.Parameters.AddWithValue("@ID", model.ID);
 
             }

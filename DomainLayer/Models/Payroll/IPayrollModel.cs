@@ -1,6 +1,6 @@
 ﻿namespace DomainLayer.Models.Payroll
 {
-    interface IPayrollModel
+    public interface IPayrollModel
     {
         int EmployeeID { get; set; }
         int GrossPay { get; set; }
