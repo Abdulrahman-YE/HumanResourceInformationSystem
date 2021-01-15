@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace InfrastructureLayer.DataAccess.Repositories.Payroll
 {
-    class PayrollRepository : IPayrollRepository
+    public class PayrollRepository : IPayrollRepository
     {
         protected string connectionString = Properties.Settings.Default.connectionStr;
 
@@ -133,7 +133,7 @@ namespace InfrastructureLayer.DataAccess.Repositories.Payroll
 
         public IEnumerable<IPayrollModel> GetAll()
         {
-            List<IPayrollModel> payrolls = new List<IPayrollModel>();
+            List<PayrollModel> payrolls = new List<PayrollModel>();
             DataAccessStatus dataAccessStatus = new DataAccessStatus();
 
             using (SqlConnection sqlConnection = new SqlConnection(this.connectionString))
@@ -153,7 +153,7 @@ namespace InfrastructureLayer.DataAccess.Repositories.Payroll
                             {
                                 PayrollModel payroll = new PayrollModel();
                                 payroll.ID = Int32.Parse(reader["ID"].ToString());
-                                payroll.GrossPay = Int32.Parse(reader["GrosSPay"].ToString());
+                                payroll.GrossPay = Int32.Parse(reader["GrossPay"].ToString());
                                 payroll.NetPay = Int32.Parse(reader["NetPay"].ToString());
                                 payroll.EmployeeID = Int32.Parse(reader["EmployeeID"].ToString());
 
@@ -201,9 +201,9 @@ namespace InfrastructureLayer.DataAccess.Repositories.Payroll
                             while (reader.Read())
                             {
                                 payroll.ID = id;
-                                payroll.GrossPay = Convert.ToInt32(reader["GrossPay"].ToString());
-                                payroll.NetPay = Convert.ToInt32(reader["NetPay"].ToString());
-                                payroll.EmployeeID = Convert.ToInt32(reader["EmployeeID"].ToString());
+                                payroll.GrossPay = Int32.Parse(reader["GrossPay"].ToString());
+                                payroll.NetPay = Int32.Parse(reader["NetPay"].ToString());
+                                payroll.EmployeeID = Int32.Parse(reader["EmployeeID"].ToString());
                             }
 
                         }
@@ -333,10 +333,10 @@ namespace InfrastructureLayer.DataAccess.Repositories.Payroll
                 }
 
                 string updateDepQuery =
-                    "UPDATE Payroll " +
+                    "UPDATE Payrolls " +
                     "SET GrossPay = @GrossPay, " +
                     "NetPay = @NetPay, " +
-                    "EmployeeID = @EmployeeID, " +
+                    "EmployeeID = @EmployeeID " +
                     "WHERE ID =  @ID";
 
                 using (SqlCommand cmd = new SqlCommand(updateDepQuery, sqlConnection))
@@ -385,8 +385,8 @@ namespace InfrastructureLayer.DataAccess.Repositories.Payroll
             PayrollModel account = new PayrollModel();
             DataAccessStatus dataAccessStatus = new DataAccessStatus();
             bool matchingRecoredFound = false;
-            string selectByIdQuery = "SELECT ID, GrossPay, NetPay" +
-                "FROM Payrolls WHERE EmployeeID = @EmpID";
+            string selectByIdQuery = "SELECT ID, GrossPay, NetPay " +
+                "FROM Payrolls WHERE EmployeeID = @EmployeeID";
 
             using (SqlConnection sqlConnection = new SqlConnection(this.connectionString))
             {
@@ -398,7 +398,7 @@ namespace InfrastructureLayer.DataAccess.Repositories.Payroll
                     {
                         cmd.CommandText = selectByIdQuery;
                         cmd.Prepare();
-                        cmd.Parameters.Add(new SqlParameter("@EmpID", employeeID));
+                        cmd.Parameters.Add(new SqlParameter("@EmployeeID", employeeID));
 
                         using (SqlDataReader reader = cmd.ExecuteReader())
                         {
