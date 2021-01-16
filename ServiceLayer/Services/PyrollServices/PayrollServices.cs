@@ -11,12 +11,12 @@ namespace ServiceLayer.Services.PyrollServices
     public class PayrollServices : IPayrollServices
     {
         private IPayrollRepository repository;
-        private IModelDataAnnotationCheck modelData;
+        private IModelDataAnnotationCheck modelCheck;
 
         public PayrollServices(IPayrollRepository repository, IModelDataAnnotationCheck modelData)
         {
             this.repository = repository;
-            this.modelData = modelData;
+            this.modelCheck = modelData;
         }
 
         public void Add(IPayrollModel model)
@@ -54,7 +54,7 @@ namespace ServiceLayer.Services.PyrollServices
 
         public void ValidateModelDataAnnotations(IPayrollModel model)
         {
-            modelData.ValidateModelDataAnnotations(model);
+            modelCheck.ValidateModelDataAnnotations(model);
         }
     }
 }
