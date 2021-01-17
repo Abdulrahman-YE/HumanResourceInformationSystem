@@ -1,4 +1,4 @@
-﻿namespace HRIS
+﻿namespace Hris
 {
     partial class Form1
     {
@@ -79,7 +79,7 @@
             // pictureBox2
             // 
             this.pictureBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
-            this.pictureBox2.Image = global::HRIS.Properties.Resources.mac_os;
+            this.pictureBox2.Image = global::Hris.Properties.Resources.mac_os;
             this.pictureBox2.Location = new System.Drawing.Point(9, 15);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(67, 42);
@@ -95,7 +95,7 @@
             this.Logout_btn.BorderThickness = 1;
             this.Logout_btn.CheckedState.BorderColor = System.Drawing.Color.White;
             this.Logout_btn.CheckedState.FillColor = System.Drawing.Color.White;
-            this.Logout_btn.CheckedState.Image = ((System.Drawing.Image)(resources.GetObject("guna2Button5.CheckedState.Image")));
+            this.Logout_btn.CheckedState.Image = ((System.Drawing.Image)(resources.GetObject("Logout_btn.CheckedState.Image")));
             this.Logout_btn.CheckedState.Parent = this.Logout_btn;
             this.Logout_btn.CustomImages.Parent = this.Logout_btn;
             this.Logout_btn.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
@@ -120,7 +120,7 @@
             this.Payroll_btn.ButtonMode = Guna.UI2.WinForms.Enums.ButtonMode.RadioButton;
             this.Payroll_btn.CheckedState.BorderColor = System.Drawing.Color.White;
             this.Payroll_btn.CheckedState.FillColor = System.Drawing.Color.White;
-            this.Payroll_btn.CheckedState.Image = ((System.Drawing.Image)(resources.GetObject("guna2Button4.CheckedState.Image")));
+            this.Payroll_btn.CheckedState.Image = ((System.Drawing.Image)(resources.GetObject("Payroll_btn.CheckedState.Image")));
             this.Payroll_btn.CheckedState.Parent = this.Payroll_btn;
             this.Payroll_btn.CustomImages.Parent = this.Payroll_btn;
             this.Payroll_btn.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
@@ -145,14 +145,14 @@
             this.Employee_btn.ButtonMode = Guna.UI2.WinForms.Enums.ButtonMode.RadioButton;
             this.Employee_btn.CheckedState.BorderColor = System.Drawing.Color.White;
             this.Employee_btn.CheckedState.FillColor = System.Drawing.Color.White;
-            this.Employee_btn.CheckedState.Image = ((System.Drawing.Image)(resources.GetObject("guna2Button3.CheckedState.Image")));
+            this.Employee_btn.CheckedState.Image = ((System.Drawing.Image)(resources.GetObject("Employee_btn.CheckedState.Image")));
             this.Employee_btn.CheckedState.Parent = this.Employee_btn;
             this.Employee_btn.CustomImages.Parent = this.Employee_btn;
             this.Employee_btn.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
             this.Employee_btn.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.Employee_btn.ForeColor = System.Drawing.Color.White;
             this.Employee_btn.HoverState.Parent = this.Employee_btn;
-            this.Employee_btn.Image = global::HRIS.Properties.Resources.icons8_music_folder_52px1;
+            this.Employee_btn.Image = global::Hris.Properties.Resources.icons8_music_folder_52px1;
             this.Employee_btn.Location = new System.Drawing.Point(23, 274);
             this.Employee_btn.Name = "Employee_btn";
             this.Employee_btn.ShadowDecoration.Parent = this.Employee_btn;
@@ -171,7 +171,7 @@
             this.Report_btn.ButtonMode = Guna.UI2.WinForms.Enums.ButtonMode.RadioButton;
             this.Report_btn.CheckedState.BorderColor = System.Drawing.Color.White;
             this.Report_btn.CheckedState.FillColor = System.Drawing.Color.White;
-            this.Report_btn.CheckedState.Image = ((System.Drawing.Image)(resources.GetObject("guna2Button2.CheckedState.Image")));
+            this.Report_btn.CheckedState.Image = ((System.Drawing.Image)(resources.GetObject("Report_btn.CheckedState.Image")));
             this.Report_btn.CheckedState.Parent = this.Report_btn;
             this.Report_btn.CustomImages.Parent = this.Report_btn;
             this.Report_btn.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
@@ -197,7 +197,7 @@
             this.Home_btn.Checked = true;
             this.Home_btn.CheckedState.BorderColor = System.Drawing.Color.White;
             this.Home_btn.CheckedState.FillColor = System.Drawing.Color.White;
-            this.Home_btn.CheckedState.Image = ((System.Drawing.Image)(resources.GetObject("guna2Button1.CheckedState.Image")));
+            this.Home_btn.CheckedState.Image = ((System.Drawing.Image)(resources.GetObject("Home_btn.CheckedState.Image")));
             this.Home_btn.CheckedState.Parent = this.Home_btn;
             this.Home_btn.CustomImages.Parent = this.Home_btn;
             this.Home_btn.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
@@ -212,17 +212,18 @@
             this.Home_btn.TabIndex = 0;
             this.Home_btn.UseTransparentBackground = true;
             this.Home_btn.CheckedChanged += new System.EventHandler(this.guna2Button1_CheckedChanged);
-            this.Home_btn.Click += new System.EventHandler(this.guna2Button1_Click);
+            this.Home_btn.Click += new System.EventHandler(this.Home_click);
             // 
             // imgSlide
             // 
-            this.imgSlide.Image = global::HRIS.Properties.Resources.tb1;
+            this.imgSlide.Image = global::Hris.Properties.Resources.tb1;
             this.imgSlide.Location = new System.Drawing.Point(47, 97);
             this.imgSlide.Name = "imgSlide";
             this.imgSlide.Size = new System.Drawing.Size(39, 101);
             this.imgSlide.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.imgSlide.TabIndex = 0;
             this.imgSlide.TabStop = false;
+            this.imgSlide.Click += new System.EventHandler(this.imgSlide_Click);
             // 
             // panelContainer
             // 

@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace HRIS
+namespace Hris
 {
     public partial class UC_Dashboard : UserControl
     {

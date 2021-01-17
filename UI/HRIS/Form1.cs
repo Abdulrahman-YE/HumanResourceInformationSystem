@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace HRIS
+namespace Hris
 {
     public partial class Form1 : Form
     {
@@ -44,11 +44,7 @@ namespace HRIS
           
         }
 
-        private void guna2Button1_Click(object sender, EventArgs e)
-        {
-            UC_Dashboard uC_ = new UC_Dashboard();
-            addUserControl(uC_);
-        }
+       
 
         private void guna2Button3_Click(object sender, EventArgs e)
         {
@@ -58,6 +54,17 @@ namespace HRIS
         private void guna2Button5_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void imgSlide_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Home_click(object sender, EventArgs e)
+        {
+            UC_Dashboard uC_ = new UC_Dashboard();
+            addUserControl(uC_);
         }
     }
 }

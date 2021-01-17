@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace HRIS.Properties {
+namespace Hris.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

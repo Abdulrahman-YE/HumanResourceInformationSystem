@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{B7C747E3-8285-463D-9368-7B2EF27B2BC0}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>HRIS</RootNamespace>
-    <AssemblyName>HRIS</AssemblyName>
+    <RootNamespace>Hris</RootNamespace>
+    <AssemblyName>Hris</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
