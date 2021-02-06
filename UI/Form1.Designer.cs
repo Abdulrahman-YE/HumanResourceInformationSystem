@@ -1,4 +1,4 @@
-﻿namespace Hris
+﻿namespace PresentationLayer
 {
     partial class Form1
     {
@@ -79,7 +79,7 @@
             // pictureBox2
             // 
             this.pictureBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
-            this.pictureBox2.Image = global::Hris.Properties.Resources.mac_os;
+            this.pictureBox2.Image = global::PresentationLayer.Properties.Resources.mac_os;
             this.pictureBox2.Location = new System.Drawing.Point(9, 15);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(67, 42);
@@ -152,7 +152,7 @@
             this.Employee_btn.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.Employee_btn.ForeColor = System.Drawing.Color.White;
             this.Employee_btn.HoverState.Parent = this.Employee_btn;
-            this.Employee_btn.Image = global::Hris.Properties.Resources.icons8_music_folder_52px1;
+            this.Employee_btn.Image = global::PresentationLayer.Properties.Resources.icons8_music_folder_52px1;
             this.Employee_btn.Location = new System.Drawing.Point(23, 274);
             this.Employee_btn.Name = "Employee_btn";
             this.Employee_btn.ShadowDecoration.Parent = this.Employee_btn;
@@ -216,7 +216,7 @@
             // 
             // imgSlide
             // 
-            this.imgSlide.Image = global::Hris.Properties.Resources.tb1;
+            this.imgSlide.Image = global::PresentationLayer.Properties.Resources.tb1;
             this.imgSlide.Location = new System.Drawing.Point(47, 97);
             this.imgSlide.Name = "imgSlide";
             this.imgSlide.Size = new System.Drawing.Size(39, 101);

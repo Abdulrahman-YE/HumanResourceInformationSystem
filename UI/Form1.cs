@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Hris
+namespace PresentationLayer
 {
     public partial class Form1 : Form
     {

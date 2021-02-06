@@ -1,4 +1,4 @@
-﻿namespace Hris
+﻿namespace PresentationLayer
 {
     partial class UC_Dashboard
     {
@@ -616,8 +616,8 @@
             // 
             // pictureBox2
             // 
-            this.pictureBox2.Image = global::Hris.Properties.Resources.Untitled_1;
-            this.pictureBox2.InitialImage = global::Hris.Properties.Resources.Untitled_1;
+            this.pictureBox2.Image = global::PresentationLayer.Properties.Resources.Untitled_1;
+            this.pictureBox2.InitialImage = global::PresentationLayer.Properties.Resources.Untitled_1;
             this.pictureBox2.Location = new System.Drawing.Point(11, 226);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(475, 137);
