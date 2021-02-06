@@ -45,6 +45,9 @@
     <Compile Include="CommonServices\IModelDataAnnotationCheck.cs" />
     <Compile Include="CommonServices\ModelDataAnnotationCheck.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\AccountServices\AccountServices.cs" />
+    <Compile Include="Services\AccountServices\IAccountRepository.cs" />
+    <Compile Include="Services\AccountServices\IAccountServices.cs" />
     <Compile Include="Services\DepartmentServices\DepartmentServices.cs" />
     <Compile Include="Services\DepartmentServices\IDepartmentRepository.cs" />
     <Compile Include="Services\DepartmentServices\IDepartmentServices.cs" />
@@ -54,6 +57,12 @@
     <Compile Include="Services\LocationServices\ILocationRepository.cs" />
     <Compile Include="Services\LocationServices\ILocationServices.cs" />
     <Compile Include="Services\LocationServices\LocationServices.cs" />
+    <Compile Include="Services\PaycheckServices\IPaycheckRepository.cs" />
+    <Compile Include="Services\PaycheckServices\IPaycheckServices.cs" />
+    <Compile Include="Services\PaycheckServices\PaycheckServices.cs" />
+    <Compile Include="Services\PyrollServices\IPayrollRepository.cs" />
+    <Compile Include="Services\PyrollServices\IPayrollServices.cs" />
+    <Compile Include="Services\PyrollServices\PayrollServices.cs" />
     <Compile Include="Services\RoleServices\IRoleRepository.cs" />
     <Compile Include="Services\RoleServices\IRoleServices.cs" />
     <Compile Include="Services\RoleServices\RoleServices.cs" />

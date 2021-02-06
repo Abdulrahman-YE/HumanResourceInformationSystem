@@ -2,7 +2,7 @@
 
 namespace DomainLayer.Models.Paycheck
 {
-    interface IPaycheckModel
+    public interface IPaycheckModel
     {
         int Amount { get; set; }
         int EmployeeID { get; set; }
